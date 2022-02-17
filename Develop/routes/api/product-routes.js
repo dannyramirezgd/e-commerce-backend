@@ -109,7 +109,7 @@ router.put('/:id', (req, res) => {
       // get list of current tag_ids
       const productTagIds = productTags.map(({ tag_id }) => tag_id);
       // create filtered list of new tag_ids
-      const newProductTags = req.body.tagIds
+      const newProductTags = req.body.tagIds  
         .filter((tag_id) => !productTagIds.includes(tag_id))
         .map((tag_id) => {
           return {
@@ -137,6 +137,22 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(dbPostData => {
+    if (!dbPostData) {
+        res.status(404).json({ message: 'no product found with this id!' });
+        return;
+    }
+    res.json(dbPostData)
+}) 
+.catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+})
 });
 
 module.exports = router;
